@@ -1,4 +1,4 @@
-package Client;
+package client;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,6 +24,12 @@ public class ChatFrame extends JFrame {
     public void pushMessage(String newMessage){
         if (!newMessage.isBlank()){
             textArea.append(newMessage + "\n");
+        }
+    }
+
+    public void prepareMessage(String preparedMessage){
+        if (!preparedMessage.isBlank()){
+            chatField.setText(preparedMessage);
         }
     }
 
