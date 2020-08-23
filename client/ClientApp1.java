@@ -4,10 +4,10 @@ import server.*;
 
 import java.io.IOException;
 
-public class ClientAppKlaus {
+public class ClientApp1 {
     public static void main(String[] args) {
         try {
-            new Client(Server.PORT, "l4 p4 Klaus").start();
+            new Client(Server.PORT).start("l1","p1");
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }

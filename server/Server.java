@@ -13,10 +13,8 @@ public class Server {
     // JDBC driver name and database URL
     static final String JDBC_DRIVER = "org.h2.Driver";
     static final String DB_URL = "jdbc:h2:~/netChat";
-
-    //  Database credentials
-    static final String USER = "sa";
-    static final String PASS = "";
+    static final String DB_USER = "sa";
+    static final String DB_PASS = "";
 
     public static final int PORT = 8082;
 
@@ -29,7 +27,7 @@ public class Server {
     private AuthService authService;
     private Set<ClientHandler> clientHandlers;
 
-    private Connection conn = null;
+    private Connection dataBaseConnection = null;
 
     public Server() {
         this(PORT);
@@ -41,7 +39,7 @@ public class Server {
             initSQLServer();
             initDatabase();
 
-            authService = new BasicAuthService();
+            authService = new DatabaseAuthService(dataBaseConnection);
             System.out.println("Auth is started up");
 
             clientHandlers = new HashSet<>();
@@ -62,7 +60,7 @@ public class Server {
         finally {
             //Закрываем коннект
             try {
-                if(conn!=null) conn.close();
+                if(dataBaseConnection !=null) dataBaseConnection.close();
             } catch(SQLException se){
                 se.printStackTrace();
             }
@@ -109,7 +107,7 @@ public class Server {
     private void sendPrivateMessage(String name, String message) {
         ClientHandler sender = getClientHandlerByName(name);
 
-        String split[] = message.split("\\s");
+        String[] split = message.split("\\s");
 
         if (split.length == 1){
             sender.sendMessage(String.format("Whisp command format: %sname message", Server.WHISP_MESSAGE));
@@ -151,16 +149,16 @@ public class Server {
 
     public void initSQLServer() throws SQLException, ClassNotFoundException {
         Class.forName(Server.JDBC_DRIVER);
-        conn = DriverManager.getConnection(Server.DB_URL,Server.USER,Server.PASS);
+        dataBaseConnection = DriverManager.getConnection(Server.DB_URL,Server.DB_USER,Server.DB_PASS);
     }
 
     /**
      * Создаем таблицы в базе данных и наполняем юзерами, если их не было
      */
-    public void initDatabase() throws SQLException {
+    public void initDatabase() throws SQLException{
 
         //try with resource - автоматически закроет statement
-        try (Statement statement = conn.createStatement()) {
+        try (Statement statement = dataBaseConnection.createStatement()) {
 
             String sql = "CREATE TABLE IF NOT EXISTS CHAT_USERS" +
                     "(id INTEGER IDENTITY," +
@@ -189,8 +187,6 @@ public class Server {
                 statement.executeUpdate(sql);
             }
 
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace();
         }
     }
 }
