@@ -1,4 +1,6 @@
-package client;
+package client.gui;
+
+import client.MessageListener;
 
 import javax.swing.*;
 import java.awt.*;

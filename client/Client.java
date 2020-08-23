@@ -5,28 +5,40 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+import client.gui.ChatFrame;
+import client.gui.LoginFrame;
 import server.Server;
 
-public class Client {
+public class Client implements AuthorizationChecker{
     private int port;
     private Socket socket;
     private DataInputStream in;
     private DataOutputStream out;
     private ChatFrame chatFrame;
-    private String logPass;
 
 
-    public Client(int port, String logPass) {
+
+    public Client(int port) {
         this.port = port;
-        this.logPass = logPass;
     }
 
-    private void init() throws IOException {
+    /**
+     * Инициализация подключений, вызов диалогового окна с логином и общего окна
+     */
+    private void init(String login, String password) throws IOException {
+        //Коннекты к серверу
         socket = new Socket("localhost", port);
         in = new DataInputStream(socket.getInputStream());
         out = new DataOutputStream(socket.getOutputStream());
 
-        chatFrame = new ChatFrame("Клиент чата " + logPass,
+        //Диалоговое окно с логином и паролем. В качестве метода авторизации
+        //используется перегруженный метод checkAuthorization из Client
+        LoginFrame loginFrame = new LoginFrame(this, login, password);
+        System.out.println(loginFrame.isAuthorized());
+        loginFrame.dispose();
+
+        //Основное окно чата
+        chatFrame = new ChatFrame("Клиент чата " + login,
             new MessageListener() {
                      @Override
                      public void messagePerformed(String message) {
@@ -39,16 +51,17 @@ public class Client {
                  });
     }
 
-    public void start() throws IOException {
+    /**
+     * Запуск клиента. Логин и пароль передаются для удобства отладки, ну или если мы их сохраним в реестре
+     */
+    public void start(String login, String password) throws IOException {
 
-        init();
+        init(login, password);
 
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-
-                    doAuthorization();
 
                     while (true) {
                         String message = in.readUTF();
@@ -73,14 +86,25 @@ public class Client {
         thread.start();
     }
 
-    private void doAuthorization() throws IOException {
-        out.writeUTF(Server.AUTH_MESSAGE + " " + logPass);
-        while (true) {
+    /**
+     * Метод проверки авторизации из интерфейса AutorizationChecker
+     * Получает логин и пароль, соединяется с сервером и проверяет, существует ли
+     * пользователь с указанным логином и паролем.
+     *
+     */
+    @Override
+    public boolean checkAuthorization(String login, String password) {
+        try {
+            out.writeUTF(Server.AUTH_MESSAGE + " " + login + " " + password);
             String message = in.readUTF();
             if (message.startsWith(Server.AUTH_DONE_MESSAGE)) {
                 System.out.println("Authorized");
-                break;
+                return true;
             }
         }
+        catch (IOException exception){
+            throw new RuntimeException("Ошибка авторизации", exception);
+        }
+        return false;
     }
 }
