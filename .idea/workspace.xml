@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="BRANCH:SQLBased_ChangeNickname" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </select>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="c19f4627-8a5f-45d9-9e29-927676470a5f" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$/src" value="master" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/src" />
+    <option name="RESET_MODE" value="MIXED" />
+  </component>
+  <component name="ProjectId" id="1fufaqq5VoaHmUjuslMCgvXOZVN" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="Downloaded.Files.Path.Enabled" value="false" />
+    <property name="Repository.Attach.Annotations" value="false" />
+    <property name="Repository.Attach.JavaDocs" value="false" />
+    <property name="Repository.Attach.Sources" value="false" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="extract.method.default.visibility" value="private" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src" />
+    <property name="project.structure.last.edited" value="Libraries" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.24597701" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="server" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Application.ServerApp">
+    <configuration name="ClientApp1" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="client.ClientApp1" />
+      <module name="Geekbrains.Lesson16.NetChat" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="server.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ClientApp2" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="client.ClientApp2" />
+      <module name="Geekbrains.Lesson16.NetChat" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="server.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ClientApp3" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="client.ClientApp3" />
+      <module name="Geekbrains.Lesson16.NetChat" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="server.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ClientApp4" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="client.ClientApp4" />
+      <module name="Geekbrains.Lesson16.NetChat" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="server.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ServerApp" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="server.ServerApp" />
+      <module name="Geekbrains.Lesson16.NetChat" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="server.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.ClientApp1" />
+        <item itemvalue="Application.ClientApp2" />
+        <item itemvalue="Application.ServerApp" />
+        <item itemvalue="Application.ClientApp4" />
+        <item itemvalue="Application.ClientApp3" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="c19f4627-8a5f-45d9-9e29-927676470a5f" name="Default Changelist" comment="" />
+      <created>1597072964637</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1597072964637</updated>
+    </task>
+    <task id="LOCAL-00001" summary="Ready">
+      <created>1597099101278</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1597099101278</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Init database commit">
+      <created>1598208522143</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1598208522143</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Database authorization ready">
+      <created>1598214587448</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1598214587448</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Строковые сообщения переделаны на тип ChatMessage">
+      <created>1598227697209</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1598227697209</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="SQLBased_ChangeNickname" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="master" />
+                </option>
+              </RecentGroup>
+            </list>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Ready" />
+    <MESSAGE value="Init database commit" />
+    <MESSAGE value="Database authorization ready" />
+    <MESSAGE value="Строковые сообщения переделаны на тип ChatMessage" />
+    <option name="LAST_COMMIT_MESSAGE" value="Строковые сообщения переделаны на тип ChatMessage" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="1182" y="257" key="#com.intellij.ide.util.MemberChooser" timestamp="1598215539316">
+      <screen x="0" y="0" width="2752" height="1112" />
+    </state>
+    <state x="1182" y="257" key="#com.intellij.ide.util.MemberChooser/0.0.2752.1112@0.0.2752.1112" timestamp="1598215539316" />
+    <state x="1107" y="335" key="#com.intellij.ide.util.PackageChooserDialog" timestamp="1598227442799">
+      <screen x="0" y="0" width="2752" height="1112" />
+    </state>
+    <state x="1107" y="335" key="#com.intellij.ide.util.PackageChooserDialog/0.0.2752.1112@0.0.2752.1112" timestamp="1598227442799" />
+    <state x="1159" y="450" width="433" height="217" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes" timestamp="1598227444082">
+      <screen x="0" y="0" width="2752" height="1112" />
+    </state>
+    <state x="1159" y="450" width="433" height="217" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes/0.0.2752.1112@0.0.2752.1112" timestamp="1598227444082" />
+    <state x="870" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1598227587867">
+      <screen x="0" y="0" width="2752" height="1112" />
+    </state>
+    <state x="870" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.2752.1112@0.0.2752.1112" timestamp="1598227587867" />
+    <state x="1132" y="259" key="#xdebugger.evaluate" timestamp="1598221362601">
+      <screen x="0" y="0" width="2752" height="1112" />
+    </state>
+    <state x="1132" y="259" key="#xdebugger.evaluate/0.0.2752.1112@0.0.2752.1112" timestamp="1598221362601" />
+    <state x="1157" y="297" key="FileChooserDialogImpl" timestamp="1597073403492">
+      <screen x="0" y="0" width="2752" height="1112" />
+    </state>
+    <state x="1157" y="297" key="FileChooserDialogImpl/0.0.2752.1112@0.0.2752.1112" timestamp="1597073403492" />
+    <state x="1237" y="468" key="Github.Dialog.Accounts.Choose" timestamp="1598203328584">
+      <screen x="0" y="0" width="2752" height="1112" />
+    </state>
+    <state x="1237" y="468" key="Github.Dialog.Accounts.Choose/0.0.2752.1112@0.0.2752.1112" timestamp="1598203328584" />
+    <state x="1205" y="436" key="Github.ShareDialog" timestamp="1597073416015">
+      <screen x="0" y="0" width="2752" height="1112" />
+    </state>
+    <state x="1205" y="436" key="Github.ShareDialog/0.0.2752.1112@0.0.2752.1112" timestamp="1597073416015" />
+    <state x="1071" y="261" key="Github.UntrackedFilesDialog" timestamp="1597073422839">
+      <screen x="0" y="0" width="2752" height="1112" />
+    </state>
+    <state x="1071" y="261" key="Github.UntrackedFilesDialog/0.0.2752.1112@0.0.2752.1112" timestamp="1597073422839" />
+    <state width="2709" height="173" key="GridCell.Tab.0.bottom" timestamp="1598228072606">
+      <screen x="0" y="0" width="2752" height="1112" />
+    </state>
+    <state width="2709" height="173" key="GridCell.Tab.0.bottom/0.0.2752.1112@0.0.2752.1112" timestamp="1598228072606" />
+    <state width="2709" height="173" key="GridCell.Tab.0.center" timestamp="1598228072606">
+      <screen x="0" y="0" width="2752" height="1112" />
+    </state>
+    <state width="2709" height="173" key="GridCell.Tab.0.center/0.0.2752.1112@0.0.2752.1112" timestamp="1598228072606" />
+    <state width="2709" height="173" key="GridCell.Tab.0.left" timestamp="1598228072606">
+      <screen x="0" y="0" width="2752" height="1112" />
+    </state>
+    <state width="2709" height="173" key="GridCell.Tab.0.left/0.0.2752.1112@0.0.2752.1112" timestamp="1598228072606" />
+    <state width="2709" height="173" key="GridCell.Tab.0.right" timestamp="1598228072606">
+      <screen x="0" y="0" width="2752" height="1112" />
+    </state>
+    <state width="2709" height="173" key="GridCell.Tab.0.right/0.0.2752.1112@0.0.2752.1112" timestamp="1598228072606" />
+    <state width="2709" height="251" key="GridCell.Tab.1.bottom" timestamp="1598228072603">
+      <screen x="0" y="0" width="2752" height="1112" />
+    </state>
+    <state width="2709" height="251" key="GridCell.Tab.1.bottom/0.0.2752.1112@0.0.2752.1112" timestamp="1598228072603" />
+    <state width="2709" height="251" key="GridCell.Tab.1.center" timestamp="1598228072603">
+      <screen x="0" y="0" width="2752" height="1112" />
+    </state>
+    <state width="2709" height="251" key="GridCell.Tab.1.center/0.0.2752.1112@0.0.2752.1112" timestamp="1598228072603" />
+    <state width="2709" height="251" key="GridCell.Tab.1.left" timestamp="1598228072603">
+      <screen x="0" y="0" width="2752" height="1112" />
+    </state>
+    <state width="2709" height="251" key="GridCell.Tab.1.left/0.0.2752.1112@0.0.2752.1112" timestamp="1598228072603" />
+    <state width="2709" height="251" key="GridCell.Tab.1.right" timestamp="1598228072603">
+      <screen x="0" y="0" width="2752" height="1112" />
+    </state>
+    <state width="2709" height="251" key="GridCell.Tab.1.right/0.0.2752.1112@0.0.2752.1112" timestamp="1598228072603" />
+    <state x="857" y="130" key="SettingsEditor" timestamp="1598203762758">
+      <screen x="0" y="0" width="2752" height="1112" />
+    </state>
+    <state x="857" y="130" key="SettingsEditor/0.0.2752.1112@0.0.2752.1112" timestamp="1598203762758" />
+    <state x="969" y="276" key="Vcs.Push.Dialog.v2" timestamp="1598280573956">
+      <screen x="0" y="0" width="2752" height="1112" />
+    </state>
+    <state x="969" y="276" key="Vcs.Push.Dialog.v2/0.0.2752.1112@0.0.2752.1112" timestamp="1598280573956" />
+    <state x="1106" y="447" key="com.intellij.jarRepository.RepositoryAttachDialog-DOWNLOAD" timestamp="1598203755481">
+      <screen x="0" y="0" width="2752" height="1112" />
+    </state>
+    <state x="1106" y="447" key="com.intellij.jarRepository.RepositoryAttachDialog-DOWNLOAD/0.0.2752.1112@0.0.2752.1112" timestamp="1598203755481" />
+    <state x="945" y="285" width="862" height="629" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1598220532025">
+      <screen x="0" y="0" width="2752" height="1112" />
+    </state>
+    <state x="945" y="285" width="862" height="629" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.2752.1112@0.0.2752.1112" timestamp="1598220532025" />
+    <state x="1366" y="374" key="extract.method.dialog" timestamp="1597095892702">
+      <screen x="0" y="0" width="2752" height="1112" />
+    </state>
+    <state x="1366" y="374" key="extract.method.dialog/0.0.2752.1112@0.0.2752.1112" timestamp="1597095892702" />
+    <state x="1056" y="344" key="git4idea.merge.GitPullDialog" timestamp="1598203582575">
+      <screen x="0" y="0" width="2752" height="1112" />
+    </state>
+    <state x="1056" y="344" key="git4idea.merge.GitPullDialog/0.0.2752.1112@0.0.2752.1112" timestamp="1598203582575" />
+    <state x="817" y="176" key="new project wizard" timestamp="1597951177445">
+      <screen x="0" y="0" width="2752" height="1112" />
+    </state>
+    <state x="817" y="176" key="new project wizard/0.0.2752.1112@0.0.2752.1112" timestamp="1597951177445" />
+    <state x="1039" y="243" width="672" height="678" key="search.everywhere.popup" timestamp="1598217954712">
+      <screen x="0" y="0" width="2752" height="1112" />
+    </state>
+    <state x="1039" y="243" width="672" height="678" key="search.everywhere.popup/0.0.2752.1112@0.0.2752.1112" timestamp="1598217954712" />
+  </component>
+  <component name="XDebuggerManager">
+    <watches-manager>
+      <configuration name="Application">
+        <watch expression=" message.length()" />
+      </configuration>
+    </watches-manager>
+  </component>
+</project>
