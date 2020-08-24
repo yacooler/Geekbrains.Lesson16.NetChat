@@ -22,7 +22,7 @@ public class Server {
     public static final String AUTH_DONE_MESSAGE = "/authok";
     public static final String WHISP_MESSAGE = "/w ";
     public static final String END_MESSAGE = "/end";
-    public static final String PRIVATE_MESSAGE = "Private message from";
+    public static final String PRIVATE_MESSAGE = "PM ";
 
     private AuthService authService;
     private Set<ClientHandler> clientHandlers;
@@ -89,53 +89,27 @@ public class Server {
         clientHandlers.remove(ch);
     }
 
-    public synchronized void sendMessage(String name, String message) {
-
-        if (message.toLowerCase().startsWith(WHISP_MESSAGE)){
-            sendPrivateMessage(name, message);
+    public synchronized void sendMessage(ChatMessage message) throws IOException {
+        if (message.isPrivateMessage()){
+            sendPrivateMessage(message);
         } else {
-            broadcastMessage(name, message);
+            broadcastMessage(message);
         }
     }
 
-    private void broadcastMessage(String name, String message) {
+
+    private void broadcastMessage(ChatMessage message) throws IOException{
         for (ClientHandler ch : clientHandlers){
-            ch.sendMessage(String.format("%s: %s", name, message));
+            ch.sendChatMessageToClient(message);
         }
     }
 
-    private void sendPrivateMessage(String name, String message) {
-        ClientHandler sender = getClientHandlerByName(name);
+    private void sendPrivateMessage(ChatMessage message)  throws IOException{
+        ClientHandler sender = getClientHandlerByName(message.getSender());
+        sender.sendChatMessageToClient(message);
 
-        String[] split = message.split("\\s");
-
-        if (split.length == 1){
-            sender.sendMessage(String.format("Whisp command format: %sname message", Server.WHISP_MESSAGE));
-            return;
-        }
-
-        String recipientName = split.length > 1? split[1] : "";
-        String privateMessage = message.substring(split[0].length() + split[1].length() + 1);
-
-        if (privateMessage.isBlank()){
-            sender.sendMessage("You should type message before sending");
-            return;
-        }
-
-        ClientHandler recipient = getClientHandlerByName(recipientName);
-        if (recipient == null){
-            sender.sendMessage(String.format("Unknown username: %s", recipientName));
-            return;
-        }
-
-        if (name.equalsIgnoreCase(recipientName)){
-            sender.sendMessage("You sent message to yourself: " + privateMessage);
-            return;
-        }
-
-        sender.sendMessage(String.format("You sent private message to %s: %s", recipientName, privateMessage));
-        recipient.sendMessage(String.format("%s %s: %s", PRIVATE_MESSAGE, name, privateMessage));
-
+        ClientHandler recipient = getClientHandlerByName(message.getRecipient());
+        recipient.sendChatMessageToClient(message);
     }
 
     private ClientHandler getClientHandlerByName(String name){

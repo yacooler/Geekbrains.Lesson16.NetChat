@@ -24,8 +24,12 @@ public class ClientHandler {
                 @Override
                 public void run() {
                     try {
-                        doAuth();
-                        readMessage();
+                        //Обмен авторизационными сообщениями
+                        doAuthorization();
+
+                        //Обработка сообщений от клиента
+                        handleMessages();
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     } finally {
@@ -44,52 +48,61 @@ public class ClientHandler {
         return record;
     }
 
-    public void doAuth() throws IOException {
+    public void doAuthorization() throws IOException {
         while (true) {
             System.out.println("Waiting for auth...");
-            String message = in.readUTF();
+            String message = receiveChatMessageFromClient().getMessage();
             if (message.startsWith(Server.AUTH_MESSAGE)) {
                 String[] credentials = message.split("\\s");
                 AuthService.Record possibleRecord = server.getAuthService().findRecord(credentials[1], credentials[2]);
                 if (possibleRecord != null) {
                     if (!server.isOccupied(possibleRecord)) {
                         record = possibleRecord;
-                        sendMessage(String.format("%s %s", Server.AUTH_DONE_MESSAGE, record.getName()));
-                        server.sendMessage(record.getName(),"Logged-in " + record.getName());
+                        sendChatMessageToClient(String.format(Server.AUTH_DONE_MESSAGE));
+                        sendChatMessageToClient(record.getName());
+                        server.sendMessage(new ChatMessage("System", "New user logged in:" + record.getName()));
                         server.subscribe(this);
                         break;
                     } else {
-                        sendMessage(String.format("Current user [%s] is already occupied", possibleRecord.getName()));
+                        sendChatMessageToClient(String.format("Current user [%s] is already occupied", possibleRecord.getName()));
                     }
                 } else {
-                    sendMessage(String.format("User no found"));
+                    sendChatMessageToClient(String.format("User no found"));
                 }
             }
         }
     }
 
-    public void sendMessage(String message) {
-        try {
-            out.writeUTF(message);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void readMessage() throws IOException {
+    public void handleMessages() throws IOException {
         while (true) {
-            String message = in.readUTF();
-            if (message.equals(Server.END_MESSAGE)) {
+            ChatMessage message = receiveChatMessageFromClient();
+            if (message.isEndMessage()) {
                 return;
             }
-            server.sendMessage(record.getName(), message);
+            server.sendMessage(message);
         }
     }
 
-    public void closeConnection() {
-        server.unsubscribe(this);
-        server.sendMessage(record.getName(), record.getName() + " left chat");
+
+    public void sendChatMessageToClient(ChatMessage message) throws IOException {
+        out.writeUTF(message.buildToSend());
+    }
+
+    /**
+     * Перегружена для системных функций
+     */
+    public void sendChatMessageToClient(String message) throws IOException{
+        sendChatMessageToClient(new ChatMessage(message));
+    }
+
+    public ChatMessage receiveChatMessageFromClient() throws IOException {
+        return new ChatMessage( in.readUTF() );
+    }
+
+    public void closeConnection(){
         try {
+            server.unsubscribe(this);
+            server.sendMessage(new ChatMessage("System", " User has left the chat:" + record.getName()));
             in.close();
         } catch (IOException e) {
             e.printStackTrace();
