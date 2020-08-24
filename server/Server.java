@@ -18,15 +18,11 @@ public class Server {
 
     public static final int PORT = 8082;
 
-    public static final String AUTH_MESSAGE = "/auth";
-    public static final String AUTH_DONE_MESSAGE = "/authok";
-    public static final String WHISP_MESSAGE = "/w ";
-    public static final String END_MESSAGE = "/end";
-    public static final String PRIVATE_MESSAGE = "PM ";
+
 
     private AuthService authService;
     private Set<ClientHandler> clientHandlers;
-
+    private UserDBService userDBService;
     private Connection dataBaseConnection = null;
 
     public Server() {
@@ -39,7 +35,7 @@ public class Server {
             initSQLServer();
             initDatabase();
 
-            authService = new DatabaseAuthService(dataBaseConnection);
+            authService = new AuthServiceDB(dataBaseConnection);
             System.out.println("Auth is started up");
 
             clientHandlers = new HashSet<>();
@@ -89,12 +85,27 @@ public class Server {
         clientHandlers.remove(ch);
     }
 
-    public synchronized void sendMessage(ChatMessage message) throws IOException {
-        if (message.isPrivateMessage()){
-            sendPrivateMessage(message);
-        } else {
-            broadcastMessage(message);
+    /**
+     *Сообщение от ClientHandlerа
+     */
+    public synchronized void handleMessage(ChatMessage message) throws SQLException, IOException {
+
+        switch (message.getContent()){
+            case ChatMessage.CONT_MESSAGE, ChatMessage.CONT_SERVER_MESSAGE:{
+                broadcastMessage(message);
+                break;
+            }
+            case ChatMessage.CONT_WISP_MESSAGE, ChatMessage.CONT_ERROR:{
+                sendPrivateMessage(message);
+                break;
+            }
+            case ChatMessage.CONT_RENAME:{
+                renameClient(message);
+                break;
+            }
+
         }
+
     }
 
 
@@ -109,7 +120,37 @@ public class Server {
         sender.sendChatMessageToClient(message);
 
         ClientHandler recipient = getClientHandlerByName(message.getRecipient());
-        recipient.sendChatMessageToClient(message);
+
+        if (recipient != null) {
+            recipient.sendChatMessageToClient(message);
+        } else {
+            //Если адресата не существует - отправим сообщение отправителю
+            sender.sendChatMessageToClient(new ChatMessage(ChatMessage.CONT_ERROR, String.format("Unknown username:%s", message.getRecipient())));
+        }
+    }
+
+    /**
+     * Переименование клиента
+     */
+    private synchronized void renameClient(ChatMessage message) throws SQLException, IOException {
+        ClientHandler sender = getClientHandlerByName(message.getSender());
+        if (sender == null){
+            throw new NullPointerException("Не получилось найти пользователя для переименования!");
+        }
+
+        //Проверка, свободен ли ник
+        String checkName = userDBService.getUserByName(message.getMessage()).getName();
+
+        //Уже занят
+        if (checkName != null){
+            sender.sendChatMessageToClient(new ChatMessage(ChatMessage.CONT_ERROR, String.format("Name %s is already occupied", message.getMessage())));
+            return;
+        }
+        String oldName = sender.getRecord().getName();
+        userDBService.setUserNameById(message.getMessage(), sender.getRecord().getId());
+        sender.sendChatMessageToClient(new ChatMessage(ChatMessage.CONT_RENAME_DONE, message.getMessage()));
+        sender.getRecord().setName(message.getMessage());
+        broadcastMessage(new ChatMessage(ChatMessage.CONT_SERVER_MESSAGE, String.format("%s now known as %s", oldName, sender.getRecord().getName())));
     }
 
     private ClientHandler getClientHandlerByName(String name){
@@ -124,43 +165,13 @@ public class Server {
     public void initSQLServer() throws SQLException, ClassNotFoundException {
         Class.forName(Server.JDBC_DRIVER);
         dataBaseConnection = DriverManager.getConnection(Server.DB_URL,Server.DB_USER,Server.DB_PASS);
+        userDBService = new UserDBService(dataBaseConnection);
     }
 
     /**
      * Создаем таблицы в базе данных и наполняем юзерами, если их не было
      */
     public void initDatabase() throws SQLException{
-
-        //try with resource - автоматически закроет statement
-        try (Statement statement = dataBaseConnection.createStatement()) {
-
-            String sql = "CREATE TABLE IF NOT EXISTS CHAT_USERS" +
-                    "(id INTEGER IDENTITY," +
-                    "name VARCHAR(255)," +
-                    "login VARCHAR(255)," +
-                    "password VARCHAR(255)," +
-                    "PRIMARY KEY ( id ))";
-            statement.executeUpdate(sql);
-
-            sql = "SELECT COUNT(*) as cnt FROM CHAT_USERS";
-            statement.execute(sql);
-
-            ResultSet resultSet = statement.getResultSet();
-            if (!resultSet.first()) {
-                System.out.println("Ошибка получения количества записей в CHAT_USERS!");
-                return;
-            }
-            if (resultSet.getInt("cnt") == 0) {
-
-                sql = "INSERT INTO CHAT_USERS(name, login, password)" +
-                        "VALUES('Barboss', 'l1', 'p1')" +
-                        ",('Kelvin', 'l2', 'p2')" +
-                        ",('Nicky', 'l3', 'p3')" +
-                        ",('Klaus', 'l4', 'p4')";
-
-                statement.executeUpdate(sql);
-            }
-
-        }
+        userDBService.initDatabase();
     }
 }

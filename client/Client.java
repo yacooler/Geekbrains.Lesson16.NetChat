@@ -8,7 +8,6 @@ import java.net.Socket;
 import client.gui.ChatFrame;
 import client.gui.LoginFrame;
 import server.ChatMessage;
-import server.Server;
 
 public class Client implements Authorizable {
     private int port;
@@ -40,7 +39,7 @@ public class Client implements Authorizable {
         loginFrame.dispose();
 
         //Основное окно чата. Попробую лямбды
-        chatFrame = new ChatFrame("Клиент чата " + userName, message -> sendMessage(message));
+        chatFrame = new ChatFrame("Клиент чата " + userName, message -> sendChatMessage(new ChatMessage(userName, message)));
     }
 
     /**
@@ -60,21 +59,25 @@ public class Client implements Authorizable {
 
                         ChatMessage message = receiveChatMessage();
 
-                        if (message.isEndMessage()) {
+                        if (message.getContent()==ChatMessage.CONT_END) {
                             System.out.println("Сессия закрыта сервером!");
                             break;
                         }
 
-                        if (message.isPrivateMessage()){
+                        if (message.getContent()==ChatMessage.CONT_RENAME_DONE){
+                            userName = message.getMessage();
+                            chatFrame.setTitle("Клиент чата " + userName);
+                            continue;
+                        }
 
+                        if (message.getContent()==ChatMessage.CONT_WISP_MESSAGE){
                             //Приватное сообщение бывает входящим и исходящим
                             if (!message.getSender().equals(userName)) {
-                                chatFrame.prepareMessage(Server.WHISP_MESSAGE + message.getSender() + " ");
-                                chatFrame.pushMessage(Server.PRIVATE_MESSAGE + " from " + message.getSender() + ":" + message.getMessage());
+                                chatFrame.prepareMessage(ChatMessage.MESSAGE_WISP + " " + message.getSender() + " ");
+                                chatFrame.pushMessage("PM from " + message.getSender() + ":" + message.getMessage());
                             } else {
-                                chatFrame.pushMessage(Server.PRIVATE_MESSAGE + " to " + message.getRecipient() + ":" + message.getMessage());
+                                chatFrame.pushMessage("PM to " + message.getRecipient() + ":" + message.getMessage());
                             }
-
                         } else {
                             chatFrame.pushMessage(message.getSender() + ":" + message.getMessage());
                         }
@@ -98,9 +101,9 @@ public class Client implements Authorizable {
     public boolean makeAuthorization(String login, String password) {
         try {
 
-            sendChatMessage(Server.AUTH_MESSAGE + " " + login + " " + password);
+            sendChatMessage(new ChatMessage(ChatMessage.CONT_AUTH, login + " " + password) );
 
-            if (receiveChatMessage().getMessage().startsWith(Server.AUTH_DONE_MESSAGE)) {
+            if (receiveChatMessage().getContent() == ChatMessage.CONT_AUTH_DONE) {
                 System.out.println("Authorized");
                 userName = receiveChatMessage().getMessage();
                 return true;
@@ -112,33 +115,17 @@ public class Client implements Authorizable {
         return false;
     }
 
-    /**
-     * Отправка сообщения на сервер с клиента
-     */
-    private void sendMessage(String message){
-        if (message.isBlank()) return;
 
-        try {
-            sendChatMessage(new ChatMessage(userName, message));
-        } catch (IOException ioException) {
-            throw new RuntimeException("Sending message error", ioException);
-        }
-
-    }
-
-
-    private void sendChatMessage(ChatMessage message) throws IOException{
+    private void sendChatMessage(ChatMessage message){
         if (!message.isBlank()) {
-            out.writeUTF(message.buildToSend());
+            try {
+                out.writeUTF(message.buildToSend());
+            } catch (IOException ioException) {
+                throw new RuntimeException("Ошибка отправки сообщения", ioException);
+            }
         };
     }
 
-    /**
-     * Перегружена для системных вызовов
-     */
-    private void sendChatMessage(String message) throws IOException{
-        sendChatMessage(new ChatMessage(message));
-    }
 
     private ChatMessage receiveChatMessage() throws IOException{
         return new ChatMessage(in.readUTF());

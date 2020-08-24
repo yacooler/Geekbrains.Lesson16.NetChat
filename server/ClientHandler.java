@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.Objects;
 
 public class ClientHandler {
@@ -30,7 +31,7 @@ public class ClientHandler {
                         //Обработка сообщений от клиента
                         handleMessages();
 
-                    } catch (IOException e) {
+                    } catch (IOException|SQLException e) {
                         e.printStackTrace();
                     } finally {
                         closeConnection();
@@ -48,51 +49,48 @@ public class ClientHandler {
         return record;
     }
 
-    public void doAuthorization() throws IOException {
+    public void doAuthorization() throws IOException, SQLException {
         while (true) {
             System.out.println("Waiting for auth...");
-            String message = receiveChatMessageFromClient().getMessage();
-            if (message.startsWith(Server.AUTH_MESSAGE)) {
-                String[] credentials = message.split("\\s");
-                AuthService.Record possibleRecord = server.getAuthService().findRecord(credentials[1], credentials[2]);
+            ChatMessage message = receiveChatMessageFromClient();
+            if  ( message.getContent() == ChatMessage.CONT_AUTH ){
+                String[] credentials = message.getMessage().split("\\s");
+                AuthService.Record possibleRecord = server.getAuthService().findRecord(credentials[0], credentials[1]);
                 if (possibleRecord != null) {
                     if (!server.isOccupied(possibleRecord)) {
                         record = possibleRecord;
-                        sendChatMessageToClient(String.format(Server.AUTH_DONE_MESSAGE));
-                        sendChatMessageToClient(record.getName());
-                        server.sendMessage(new ChatMessage("System", "New user logged in:" + record.getName()));
+                        sendChatMessageToClient(new ChatMessage( ChatMessage.CONT_AUTH_DONE, ChatMessage.MESSAGE_AUTH_DONE));
+                        sendChatMessageToClient(new ChatMessage( ChatMessage.CONT_RENAME, record.getName()));
+                        server.handleMessage(new ChatMessage(ChatMessage.CONT_SERVER_MESSAGE, "New user logged in:" + record.getName()));
                         server.subscribe(this);
                         break;
                     } else {
-                        sendChatMessageToClient(String.format("Current user [%s] is already occupied", possibleRecord.getName()));
+                        sendChatMessageToClient(new ChatMessage( ChatMessage.CONT_ERROR, String.format("Current user [%s] is already occupied", possibleRecord.getName())));
                     }
                 } else {
-                    sendChatMessageToClient(String.format("User no found"));
+                    sendChatMessageToClient(new ChatMessage( ChatMessage.CONT_ERROR, "User no found"));
                 }
             }
         }
     }
 
-    public void handleMessages() throws IOException {
+    /**
+     * Обработка событий, пришедших от клиента на сервер
+      * @throws IOException
+     */
+    public void handleMessages() throws IOException, SQLException {
         while (true) {
             ChatMessage message = receiveChatMessageFromClient();
-            if (message.isEndMessage()) {
+            if (message.getContent() == ChatMessage.CONT_END) {
                 return;
             }
-            server.sendMessage(message);
+            server.handleMessage(message);
         }
     }
 
 
     public void sendChatMessageToClient(ChatMessage message) throws IOException {
         out.writeUTF(message.buildToSend());
-    }
-
-    /**
-     * Перегружена для системных функций
-     */
-    public void sendChatMessageToClient(String message) throws IOException{
-        sendChatMessageToClient(new ChatMessage(message));
     }
 
     public ChatMessage receiveChatMessageFromClient() throws IOException {
@@ -102,9 +100,9 @@ public class ClientHandler {
     public void closeConnection(){
         try {
             server.unsubscribe(this);
-            server.sendMessage(new ChatMessage("System", " User has left the chat:" + record.getName()));
+            server.handleMessage(new ChatMessage(ChatMessage.CONT_SERVER_MESSAGE, "User has left the chat:" + record.getName()));
             in.close();
-        } catch (IOException e) {
+        } catch (IOException|SQLException e) {
             e.printStackTrace();
         }
         try {
