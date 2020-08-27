@@ -6,19 +6,19 @@ public interface AuthService {
     Record findRecord(String login, String password);
 
     class Record {
-        private long id;
+        private int id;
         private String name;
         private String login;
         private String password;
 
-        public Record(long id, String name, String login, String password) {
+        public Record(int id, String name, String login, String password) {
             this.id = id;
             this.name = name;
             this.login = login;
             this.password = password;
         }
 
-        public long getId() {
+        public int getId() {
             return id;
         }
 
@@ -32,6 +32,10 @@ public interface AuthService {
 
         public String getPassword() {
             return password;
+        }
+
+        public void setName(String name) {
+            this.name = name;
         }
 
         @Override

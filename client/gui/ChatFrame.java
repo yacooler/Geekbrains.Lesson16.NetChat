@@ -24,9 +24,7 @@ public class ChatFrame extends JFrame {
     }
 
     public void pushMessage(String newMessage){
-        if (!newMessage.isBlank()){
-            textArea.append(newMessage + "\n");
-        }
+        textArea.append(newMessage + "\n");
     }
 
     public void prepareMessage(String preparedMessage){

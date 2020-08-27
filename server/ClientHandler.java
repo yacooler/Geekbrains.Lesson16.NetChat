@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.Objects;
 
 public class ClientHandler {
@@ -24,9 +25,13 @@ public class ClientHandler {
                 @Override
                 public void run() {
                     try {
-                        doAuth();
-                        readMessage();
-                    } catch (IOException e) {
+                        //Обмен авторизационными сообщениями
+                        doAuthorization();
+
+                        //Обработка сообщений от клиента
+                        handleMessages();
+
+                    } catch (IOException|SQLException e) {
                         e.printStackTrace();
                     } finally {
                         closeConnection();
@@ -44,54 +49,60 @@ public class ClientHandler {
         return record;
     }
 
-    public void doAuth() throws IOException {
+    public void doAuthorization() throws IOException, SQLException {
         while (true) {
             System.out.println("Waiting for auth...");
-            String message = in.readUTF();
-            if (message.startsWith(Server.AUTH_MESSAGE)) {
-                String[] credentials = message.split("\\s");
-                AuthService.Record possibleRecord = server.getAuthService().findRecord(credentials[1], credentials[2]);
+            ChatMessage message = receiveChatMessageFromClient();
+            if  ( message.getContent() == ChatMessage.CONT_AUTH ){
+                String[] credentials = message.getMessage().split("\\s");
+                AuthService.Record possibleRecord = server.getAuthService().findRecord(credentials[0], credentials[1]);
                 if (possibleRecord != null) {
                     if (!server.isOccupied(possibleRecord)) {
                         record = possibleRecord;
-                        sendMessage(String.format("%s %s", Server.AUTH_DONE_MESSAGE, record.getName()));
-                        server.sendMessage(record.getName(),"Logged-in " + record.getName());
+                        sendChatMessageToClient(new ChatMessage( ChatMessage.CONT_AUTH_DONE, ChatMessage.MESSAGE_AUTH_DONE));
+                        sendChatMessageToClient(new ChatMessage( ChatMessage.CONT_RENAME, record.getName()));
+                        server.handleMessage(new ChatMessage(ChatMessage.CONT_SERVER_MESSAGE, "New user logged in:" + record.getName()));
                         server.subscribe(this);
                         break;
                     } else {
-                        sendMessage(String.format("Current user [%s] is already occupied", possibleRecord.getName()));
+                        sendChatMessageToClient(new ChatMessage( ChatMessage.CONT_ERROR, String.format("Current user [%s] is already occupied", possibleRecord.getName())));
                     }
                 } else {
-                    sendMessage(String.format("User no found"));
+                    sendChatMessageToClient(new ChatMessage( ChatMessage.CONT_ERROR, "User no found"));
                 }
             }
         }
     }
 
-    public void sendMessage(String message) {
-        try {
-            out.writeUTF(message);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void readMessage() throws IOException {
+    /**
+     * Обработка событий, пришедших от клиента на сервер
+      * @throws IOException
+     */
+    public void handleMessages() throws IOException, SQLException {
         while (true) {
-            String message = in.readUTF();
-            if (message.equals(Server.END_MESSAGE)) {
+            ChatMessage message = receiveChatMessageFromClient();
+            if (message.getContent() == ChatMessage.CONT_END) {
                 return;
             }
-            server.sendMessage(record.getName(), message);
+            server.handleMessage(message);
         }
     }
 
-    public void closeConnection() {
-        server.unsubscribe(this);
-        server.sendMessage(record.getName(), record.getName() + " left chat");
+
+    public void sendChatMessageToClient(ChatMessage message) throws IOException {
+        out.writeUTF(message.buildToSend());
+    }
+
+    public ChatMessage receiveChatMessageFromClient() throws IOException {
+        return new ChatMessage( in.readUTF() );
+    }
+
+    public void closeConnection(){
         try {
+            server.unsubscribe(this);
+            server.handleMessage(new ChatMessage(ChatMessage.CONT_SERVER_MESSAGE, "User has left the chat:" + record.getName()));
             in.close();
-        } catch (IOException e) {
+        } catch (IOException|SQLException e) {
             e.printStackTrace();
         }
         try {

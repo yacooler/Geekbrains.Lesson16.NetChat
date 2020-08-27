@@ -1,6 +1,6 @@
 package client.gui;
 
-import client.AuthorizationChecker;
+import client.Authorizable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,12 +16,12 @@ public class LoginFrame extends JDialog {
     private JLabel authLabel;
 
 
-    private AuthorizationChecker authorizationChecker;
+    private Authorizable authorizable;
 
-    public LoginFrame(AuthorizationChecker authorizationChecker, String login, String password){
+    public LoginFrame(Authorizable authorizable, String login, String password){
         /* Класс, реализующий проверку авторизации. Приходит снаружи, чтобы не
          вносить во фрейм взаимодействие с сервером*/
-        this.authorizationChecker = authorizationChecker;
+        this.authorizable = authorizable;
 
         //Устанавливаем диалог модальным, чтобы остановить выполнение потока
         setModal(true);
@@ -65,7 +65,7 @@ public class LoginFrame extends JDialog {
 
     private void buttonOkClicked(){
         //Проверку авторизации осуществляет объект, который мы передали в конструкторе
-        isAuthorized = authorizationChecker.checkAuthorization(loginTextField.getText(), passwordTextField.getText());
+        isAuthorized = authorizable.makeAuthorization(loginTextField.getText(), passwordTextField.getText());
         if (isAuthorized) {
             //Для модального окна позволяет продолжить поток, в котором оно запущено
             setVisible(false);

@@ -7,14 +7,15 @@ import java.net.Socket;
 
 import client.gui.ChatFrame;
 import client.gui.LoginFrame;
-import server.Server;
+import server.ChatMessage;
 
-public class Client implements AuthorizationChecker{
+public class Client implements Authorizable {
     private int port;
     private Socket socket;
     private DataInputStream in;
     private DataOutputStream out;
     private ChatFrame chatFrame;
+    private String userName;
 
 
 
@@ -37,18 +38,8 @@ public class Client implements AuthorizationChecker{
         System.out.println(loginFrame.isAuthorized());
         loginFrame.dispose();
 
-        //Основное окно чата
-        chatFrame = new ChatFrame("Клиент чата " + login,
-            new MessageListener() {
-                     @Override
-                     public void messagePerformed(String message) {
-                         try {
-                             out.writeUTF(message);
-                         } catch (IOException ioException) {
-                             throw new RuntimeException("Sending message error", ioException);
-                         }
-                     }
-                 });
+        //Основное окно чата. Попробую лямбды
+        chatFrame = new ChatFrame("Клиент чата " + userName, message -> sendChatMessage(new ChatMessage(userName, message)));
     }
 
     /**
@@ -58,23 +49,38 @@ public class Client implements AuthorizationChecker{
 
         init(login, password);
 
+        //Получение сообщений от сервера
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
 
                     while (true) {
-                        String message = in.readUTF();
-                        if (message.equals(Server.END_MESSAGE)) {
-                            System.out.println("Session closed. Cau!");
+
+                        ChatMessage message = receiveChatMessage();
+
+                        if (message.getContent()==ChatMessage.CONT_END) {
+                            System.out.println("Сессия закрыта сервером!");
                             break;
                         }
 
-                        if (message.startsWith(Server.PRIVATE_MESSAGE)){
-                            chatFrame.prepareMessage(Server.WHISP_MESSAGE + message.split(":")[0].split("\\s")[Server.PRIVATE_MESSAGE.split("\\s").length] + " ");
+                        if (message.getContent()==ChatMessage.CONT_RENAME_DONE){
+                            userName = message.getMessage();
+                            chatFrame.setTitle("Клиент чата " + userName);
+                            continue;
                         }
 
-                        chatFrame.pushMessage(message);
+                        if (message.getContent()==ChatMessage.CONT_WISP_MESSAGE){
+                            //Приватное сообщение бывает входящим и исходящим
+                            if (!message.getSender().equals(userName)) {
+                                chatFrame.prepareMessage(ChatMessage.MESSAGE_WISP + " " + message.getSender() + " ");
+                                chatFrame.pushMessage("PM from " + message.getSender() + ":" + message.getMessage());
+                            } else {
+                                chatFrame.pushMessage("PM to " + message.getRecipient() + ":" + message.getMessage());
+                            }
+                        } else {
+                            chatFrame.pushMessage(message.getSender() + ":" + message.getMessage());
+                        }
 
                     }
                 } catch (IOException e) {
@@ -87,18 +93,19 @@ public class Client implements AuthorizationChecker{
     }
 
     /**
-     * Метод проверки авторизации из интерфейса AutorizationChecker
+     * Метод проверки авторизации из интерфейса AutorizationMaker
      * Получает логин и пароль, соединяется с сервером и проверяет, существует ли
-     * пользователь с указанным логином и паролем.
-     *
+     * пользователь с указанным логином и паролем. Сервер возвращает имя текущего пользователя
      */
     @Override
-    public boolean checkAuthorization(String login, String password) {
+    public boolean makeAuthorization(String login, String password) {
         try {
-            out.writeUTF(Server.AUTH_MESSAGE + " " + login + " " + password);
-            String message = in.readUTF();
-            if (message.startsWith(Server.AUTH_DONE_MESSAGE)) {
+
+            sendChatMessage(new ChatMessage(ChatMessage.CONT_AUTH, login + " " + password) );
+
+            if (receiveChatMessage().getContent() == ChatMessage.CONT_AUTH_DONE) {
                 System.out.println("Authorized");
+                userName = receiveChatMessage().getMessage();
                 return true;
             }
         }
@@ -107,4 +114,21 @@ public class Client implements AuthorizationChecker{
         }
         return false;
     }
+
+
+    private void sendChatMessage(ChatMessage message){
+        if (!message.isBlank()) {
+            try {
+                out.writeUTF(message.buildToSend());
+            } catch (IOException ioException) {
+                throw new RuntimeException("Ошибка отправки сообщения", ioException);
+            }
+        };
+    }
+
+
+    private ChatMessage receiveChatMessage() throws IOException{
+        return new ChatMessage(in.readUTF());
+    }
+
 }
